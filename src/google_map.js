@@ -565,13 +565,33 @@ class GoogleMap extends Component {
         };
 
         // Start Heatmap
-        if (this.props.heatmap.positions) {
+        if (this.props.heatmap.isArray()) {
+          const temp = [];
+          this.props.heatmap.forEach((e) => {
+            const mapObj = generateHeatmap(maps, e);
+            optionsHeatmap(mapObj, e);
+            temp.push(mapObj);
+          });
+          Object.assign(this, {
+            heatmap: temp,
+          });
+        } else if (this.props.heatmap.positions) {
           Object.assign(this, {
             heatmap: generateHeatmap(maps, this.props.heatmap),
           });
+
           optionsHeatmap(this.heatmap, this.props.heatmap);
         }
+
         // End Heatmap
+        // // Start Heatmap
+        // if (this.props.heatmap.positions) {
+        //   Object.assign(this, {
+        //     heatmap: generateHeatmap(maps, this.props.heatmap),
+        //   });
+        //   optionsHeatmap(this.heatmap, this.props.heatmap);
+        // }
+        // // End Heatmap
 
         // prevent to exapose full api
         // next props must be exposed (console.log(Object.keys(pick(maps, isPlainObject))))
@@ -716,9 +736,16 @@ class GoogleMap extends Component {
         this.overlay_ = overlay;
 
         overlay.setMap(map);
-        if (this.props.heatmap.positions) {
+        if (this.props.heatmap.isArray()) {
+          this.props.heatmap.forEach((e) => {
+            e.setMap(map);
+          });
+        } else if (this.props.heatmap.positions) {
           this.heatmap.setMap(map);
         }
+        // if (this.props.heatmap.positions) {
+        //   this.heatmap.setMap(map);
+        // }
 
         if (this.props.onTilesLoaded) {
           maps.event.addListener(map, 'tilesloaded', () => {
