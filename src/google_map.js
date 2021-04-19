@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies, react/forbid-prop-types, react/no-find-dom-node, no-console, no-undef */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
@@ -403,26 +402,70 @@ class GoogleMap extends Component {
         });
         this._setLayers(this.props.layerTypes);
       }
+      if (this.heatmap && Array.isArray(this.heatmap)) {
+        // multiple heatmaps
+        const temp = [];
 
-      if (
-        this.heatmap &&
-        !shallowEqual(this.props.heatmap.positions, prevProps.heatmap.positions)
-      ) {
-        this.heatmap.setData(
-          this.props.heatmap.positions.map((p) => ({
-            location: new this.maps_.LatLng(p.lat, p.lng),
-            weight: p.weight,
-          }))
-        );
-      }
-      if (
-        this.heatmap &&
-        !shallowEqual(this.props.heatmap.options, prevProps.heatmap.options)
-      ) {
-        Object.keys(this.props.heatmap.options).forEach((option) => {
-          this.heatmap.set(option, this.props.heatmap.options[option]);
+        this.heatmap.forEach((e, idx) => {
+          e.setData(
+            this.props.heatmap[idx].positions.map((p) => ({
+              location: new this.maps_.LatLng(p.lat, p.lng),
+              weight: p.weight,
+            }))
+          );
+
+          Object.keys(this.props.heatmap[idx].options).forEach((option) => {
+            e.set(option, this.props.heatmap[idx].options[option]);
+          });
+          temp.push(e);
         });
+        this.heatmap = temp;
+      } else {
+        // single heatmap
+        if (
+          this.heatmap &&
+          !shallowEqual(
+            this.props.heatmap.positions,
+            prevProps.heatmap.positions
+          )
+        ) {
+          this.heatmap.setData(
+            this.props.heatmap.positions.map((p) => ({
+              location: new this.maps_.LatLng(p.lat, p.lng),
+              weight: p.weight,
+            }))
+          );
+        }
+        if (
+          this.heatmap &&
+          !shallowEqual(this.props.heatmap.options, prevProps.heatmap.options)
+        ) {
+          Object.keys(this.props.heatmap.options).forEach((option) => {
+            this.heatmap.set(option, this.props.heatmap.options[option]);
+          });
+        }
       }
+      //
+      //       if (
+      //         this.heatmap &&
+      //         !shallowEqual(this.props.heatmap.positions, prevProps.heatmap.positions)
+      //       ) {
+      //         this.heatmap.setData(
+      //           this.props.heatmap.positions.map((p) => ({
+      //             location: new this.maps_.LatLng(p.lat, p.lng),
+      //             weight: p.weight,
+      //           }))
+      //         );
+      //       }
+      //       if (
+      //         this.heatmap &&
+      //         !shallowEqual(this.props.heatmap.options, prevProps.heatmap.options)
+      //       ) {
+      //         Object.keys(this.props.heatmap.options).forEach((option) => {
+      //           this.heatmap.set(option, this.props.heatmap.options[option]);
+      //         });
+      //       }
+      //
     }
     // emit actions
     this.markersDispatcher_.emit('kON_CHANGE');
@@ -565,7 +608,7 @@ class GoogleMap extends Component {
         };
 
         // Start Heatmap
-        if (this.props.heatmap.isArray()) {
+        if (this.props.heatmap && Array.isArray(this.props.heatmap)) {
           const temp = [];
           this.props.heatmap.forEach((e) => {
             const mapObj = generateHeatmap(maps, e);
@@ -736,8 +779,8 @@ class GoogleMap extends Component {
         this.overlay_ = overlay;
 
         overlay.setMap(map);
-        if (this.props.heatmap.isArray()) {
-          this.props.heatmap.forEach((e) => {
+        if (Array.isArray(this.props.heatmap)) {
+          this.heatmap.forEach((e) => {
             e.setMap(map);
           });
         } else if (this.props.heatmap.positions) {
