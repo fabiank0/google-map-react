@@ -134,6 +134,13 @@ class GoogleMap extends Component {
     options: PropTypes.any,
     distanceToMouse: PropTypes.func,
     hoverDistance: PropTypes.number,
+    heatmap: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.shape({
+        options: PropTypes.object,
+        positions: PropTypes.array,
+      }),
+    ]),
     debounced: PropTypes.bool,
     margin: PropTypes.array,
     googleMapLoader: PropTypes.any,
