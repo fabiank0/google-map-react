@@ -30,13 +30,7 @@
     "@googlemaps/js-api-loader": "^1.7.0",
     "@mapbox/point-geometry": "^0.1.0",
     "eventemitter3": "^4.0.4",
-    "prop-types": "^15.7.2"
-  },
-  "peerDependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
-  },
-  "devDependencies": {
+    "prop-types": "^15.7.2",
     "babel-eslint": "^10.0.3",
     "cross-env": "^7.0.2",
     "eslint": "^6.8.0",
@@ -59,6 +53,11 @@
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1"
   },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "devDependencies": {},
   "files": [
     "dist"
   ],
